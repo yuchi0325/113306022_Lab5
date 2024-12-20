@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 5 Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            text-align: center;
+            padding: 8px;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        input[type="number"] {
+            padding: 5px;
+            margin-right: 10px;
+            width: 80px;
+        }
+        button {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lab 5 - Demo</h1>
+    <div>
+        <input type="number" id="mathInput" placeholder="Math" min="0" max="100" onblur="validateInput(this)" />
+        <input type="number" id="englishInput" placeholder="English" min="0" max="100" onblur="validateInput(this)" />
+        <button onclick="addRow()">Submit</button>
+    </div>
+    <table id="gradesTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Math</th>
+                <th>English</th>
+                <th>Average</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamic rows will be added here -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>Average</td>
+                <td id="mathAverage">0.00</td>
+                <td id="englishAverage">0.00</td>
+                <td id="overallAverage">0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        let rowCount = 0;
+        const tableBody = document.querySelector("#gradesTable tbody");
+        const mathAverageCell = document.getElementById("mathAverage");
+        const englishAverageCell = document.getElementById("englishAverage");
+        const overallAverageCell = document.getElementById("overallAverage");
+
+        function validateInput(input) {
+            if (input.value < 0 || input.value > 100) {
+                alert("Please enter a value between 0 and 100."); 
+                input.value = ""; 
+            }
+        }
+
+
+        function addRow() {
+            const mathInput = document.getElementById("mathInput");
+            const englishInput = document.getElementById("englishInput");
+
+            const mathValue = parseFloat(mathInput.value);
+            const englishValue = parseFloat(englishInput.value);
+
+            if (isNaN(mathValue) || isNaN(englishValue)) {
+                alert("Please enter valid numbers for Math and English.");
+                return;
+            }
+
+            rowCount++;
+            const average = ((mathValue + englishValue) / 2).toFixed(2);
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${rowCount}</td>
+                <td>${mathValue}</td>
+                <td>${englishValue}</td>
+                <td>${average}</td>
+            `;
+            tableBody.appendChild(row);
+
+            mathInput.value = "";
+            englishInput.value = "";
+
+            updateFooter();
+        }
+
+        function updateFooter() {
+            let mathTotal = 0, englishTotal = 0, overallTotal = 0;
+
+            const rows = tableBody.querySelectorAll("tr");
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                mathTotal += parseFloat(cells[1].innerText);
+                englishTotal += parseFloat(cells[2].innerText);
+                overallTotal += parseFloat(cells[3].innerText);
+            });
+
+            const rowCount = rows.length;
+            mathAverageCell.innerText = (mathTotal / rowCount).toFixed(2);
+            englishAverageCell.innerText = (englishTotal / rowCount).toFixed(2);
+            overallAverageCell.innerText = (overallTotal / rowCount).toFixed(2);
+        }
+    </script>
+</body>
+</html>
